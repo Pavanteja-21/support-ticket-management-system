@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
@@ -36,8 +38,6 @@ public class TicketServiceImpl implements TicketService {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
-//        User user = (User) authentication.getPrincipal();
-
         Ticket ticket = new Ticket();
 
         ticket.setTitle(requestDto.getTitle());
@@ -53,6 +53,34 @@ public class TicketServiceImpl implements TicketService {
         savedTicket.setTicketNumber(ticketNo);
 
         return mapper.mapToCreateTicket(savedTicket);
+    }
+
+    // Gets all created tickets
+    @Override
+    public List<CreateTicketResponseDto> findAllTickets() {
+
+        List<Ticket> tickets = ticketRepository.findAll();
+
+        return tickets.stream()
+                .map(mapper::mapToCreateTicket)
+                .toList();
+    }
+
+    // Gets all tickets created by specific employee
+    @Override
+    public List<CreateTicketResponseDto> findAllMyTicktets() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        List<Ticket> tickets = ticketRepository.findByEmployeeId(user.getId());
+
+        return  tickets.stream()
+                .map(mapper::mapToCreateTicket)
+                .toList();
     }
 
 

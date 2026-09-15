@@ -11,10 +11,13 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    // Returns the user by email
     Optional<User> findByEmail(String email);
 
+    // Checks whether the user is in db or not by email
     Boolean existsByEmail(String email);
 
+    // Returns all the users by role with Pagination
     @Query("""
         SELECT u
         FROM User u
@@ -23,6 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     """)
     List<User> findUsersByRole(@Param("roleName") String roleName, Pageable pageable);
 
+    // Returns all the users by employee email
     @Query("""
         SELECT DISTINCT u
         FROM User u
