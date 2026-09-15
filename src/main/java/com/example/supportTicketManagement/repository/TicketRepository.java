@@ -16,4 +16,7 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
     // Gets the ticket by ticket id and agent id
     Optional<Ticket> findByIdAndAgentId(Long id, Long agentId);
+
+    // Gets the ticket by ticket id and employee id
+    Optional<Ticket> findByIdAndEmployeeId(Long id, Long employeeId);
 }

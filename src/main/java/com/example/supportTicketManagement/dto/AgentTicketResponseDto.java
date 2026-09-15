@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AgentTicketResponseDto {
+    private Long id;
+
     private String ticketNumber;
 
     private String title;

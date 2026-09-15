@@ -1,6 +1,7 @@
 package com.example.supportTicketManagement.utils;
 
 import com.example.supportTicketManagement.dto.*;
+import com.example.supportTicketManagement.entity.Comment;
 import com.example.supportTicketManagement.entity.Role;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.entity.User;
@@ -57,6 +58,7 @@ public class Mapper {
     // This method is used to map the Ticket entity to AssignTicketResponseDto
     public AssignTicketResponseDto mapToAssignTicket(Ticket ticket) {
         AssignTicketResponseDto responseDto = new AssignTicketResponseDto();
+        responseDto.setId(ticket.getId());
         responseDto.setTicketId(ticket.getId());
         responseDto.setTicketNumber(ticket.getTicketNumber());
         responseDto.setAgent(mapToUserRegisterDto(ticket.getAgent()));
@@ -68,6 +70,7 @@ public class Mapper {
     // This method is used to map the Ticket entity to AgentTicketResponseDto
     public AgentTicketResponseDto mapToAgentTicket(Ticket ticket) {
         AgentTicketResponseDto responseDto = new AgentTicketResponseDto();
+        responseDto.setId(ticket.getId());
         responseDto.setTicketNumber(ticket.getTicketNumber());
         responseDto.setTitle(ticket.getTitle());
         responseDto.setDescription(ticket.getDescription());
@@ -77,6 +80,7 @@ public class Mapper {
         return responseDto;
     }
 
+    // This method is used to map the Ticket entity to TicketStatusResponseDto
     public TicketStatusResponseDto mapToTicketStatusDto(Ticket ticket) {
         TicketStatusResponseDto responseDto = new TicketStatusResponseDto();
         responseDto.setId(ticket.getId());
@@ -87,6 +91,18 @@ public class Mapper {
         responseDto.setStatus(ticket.getStatus());
         responseDto.setUpdatedAt(ticket.getUpdatedAt());
         responseDto.setEmployee(mapToUserRegisterDto(ticket.getEmployee()));
+
+        return responseDto;
+    }
+
+    // This method is used to map the Comment entity to CommentResponseDto
+    public CommentResponseDto mapToCommentDto(Comment comment) {
+        CommentResponseDto responseDto = new CommentResponseDto();
+        responseDto.setId(comment.getId());
+        responseDto.setComment(comment.getComment());
+        responseDto.setCreatedAt(comment.getCreatedAt());
+        responseDto.setTicket(mapToTicketStatusDto(comment.getTicket()));
+        responseDto.setUser(mapToUserRegisterDto(comment.getUser()));
 
         return responseDto;
     }
