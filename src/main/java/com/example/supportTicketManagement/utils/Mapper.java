@@ -77,4 +77,18 @@ public class Mapper {
         return responseDto;
     }
 
+    public TicketStatusResponseDto mapToTicketStatusDto(Ticket ticket) {
+        TicketStatusResponseDto responseDto = new TicketStatusResponseDto();
+        responseDto.setId(ticket.getId());
+        responseDto.setTicketNumber(ticket.getTicketNumber());
+        responseDto.setTitle(ticket.getTitle());
+        responseDto.setDescription(ticket.getDescription());
+        responseDto.setPriority(ticket.getPriority());
+        responseDto.setStatus(ticket.getStatus());
+        responseDto.setUpdatedAt(ticket.getUpdatedAt());
+        responseDto.setEmployee(mapToUserRegisterDto(ticket.getEmployee()));
+
+        return responseDto;
+    }
+
 }

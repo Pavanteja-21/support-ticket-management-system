@@ -118,5 +118,37 @@ public class TicketServiceImpl implements TicketService {
                 .toList();
     }
 
+    // Agent can update the ticket status
+    @Override
+    public TicketStatusResponseDto updateTicketStatus(TicketStatusRequestDto requestDto) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        Ticket ticket = ticketRepository.findByIdAndAgentId(requestDto.getTicketId(), user.getId())
+                .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
+
+
+        if(ticket.getStatus().equals(Status.OPEN) && requestDto.getStatus().equals(Status.CLOSED)) {
+            throw new TicketClosedException("Ticket can't be closed immediately after opening the ticket");
+        }
+
+        if(ticket.getStatus().equals(Status.CLOSED)) {
+            throw new TicketClosedException("Ticket is already closed");
+        }
+
+
+
+        ticket.setStatus(requestDto.getStatus());
+
+        Ticket updatedTicket = ticketRepository.save(ticket);
+
+        return mapper.mapToTicketStatusDto(updatedTicket);
+    }
+
 
 }

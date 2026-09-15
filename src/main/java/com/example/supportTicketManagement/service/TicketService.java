@@ -17,4 +17,6 @@ public interface TicketService {
 
     List<AgentTicketResponseDto> findAllMyAgentTickets();
 
+    TicketStatusResponseDto updateTicketStatus(TicketStatusRequestDto requestDto);
+
 }

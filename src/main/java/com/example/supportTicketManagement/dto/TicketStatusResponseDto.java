@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketResponseDto {
+public class TicketStatusResponseDto {
     private Long id;
 
     private String ticketNumber;
@@ -26,11 +26,8 @@ public class TicketResponseDto {
 
     private Status status;
 
-    private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 
     private UserResponseDto employee;
 
-    private UserResponseDto agent;
 }
