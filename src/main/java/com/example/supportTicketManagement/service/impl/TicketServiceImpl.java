@@ -4,6 +4,7 @@ import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.entity.User;
 import com.example.supportTicketManagement.enums.Status;
+import com.example.supportTicketManagement.exception.TicketCannotClosedException;
 import com.example.supportTicketManagement.exception.TicketClosedException;
 import com.example.supportTicketManagement.exception.TicketNotFoundException;
 import com.example.supportTicketManagement.repository.TicketRepository;
@@ -144,6 +145,30 @@ public class TicketServiceImpl implements TicketService {
 
 
         ticket.setStatus(requestDto.getStatus());
+
+        Ticket updatedTicket = ticketRepository.save(ticket);
+
+        return mapper.mapToTicketStatusDto(updatedTicket);
+    }
+
+    // Employee can close the ticket, if ticket is resolved
+    @Override
+    public TicketStatusResponseDto closeTicketStatus(Long ticketId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        Ticket ticket = ticketRepository.findByIdAndEmployeeId(ticketId, user.getId())
+                .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
+
+        if(!ticket.getStatus().equals(Status.RESOLVED)) {
+            throw new TicketCannotClosedException("Ticket can't be closed before its resolved");
+        }
+
+        ticket.setStatus(Status.CLOSED);
 
         Ticket updatedTicket = ticketRepository.save(ticket);
 

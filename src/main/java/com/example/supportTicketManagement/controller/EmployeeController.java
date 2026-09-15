@@ -3,6 +3,7 @@ package com.example.supportTicketManagement.controller;
 import com.example.supportTicketManagement.dto.CommentRequestDto;
 import com.example.supportTicketManagement.dto.CommentResponseDto;
 import com.example.supportTicketManagement.dto.CreateTicketResponseDto;
+import com.example.supportTicketManagement.dto.TicketStatusResponseDto;
 import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.service.TicketService;
 import jakarta.validation.Valid;
@@ -38,5 +39,13 @@ public class EmployeeController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(commentService.createEmployeeComment(requestDto, ticketId));
+    }
+
+    // Employee can close the resolved tickets
+    @PatchMapping("/{ticketId}/close")
+    public ResponseEntity<TicketStatusResponseDto> closeTicket(@PathVariable Long ticketId) {
+
+        return ResponseEntity
+                .ok(ticketService.closeTicketStatus(ticketId));
     }
 }

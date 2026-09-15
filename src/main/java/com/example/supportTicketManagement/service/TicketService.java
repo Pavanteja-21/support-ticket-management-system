@@ -19,4 +19,6 @@ public interface TicketService {
 
     TicketStatusResponseDto updateTicketStatus(TicketStatusRequestDto requestDto);
 
+    TicketStatusResponseDto closeTicketStatus(Long ticketId);
+
 }

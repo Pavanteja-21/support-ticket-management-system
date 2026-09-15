@@ -58,7 +58,6 @@ public class Mapper {
     // This method is used to map the Ticket entity to AssignTicketResponseDto
     public AssignTicketResponseDto mapToAssignTicket(Ticket ticket) {
         AssignTicketResponseDto responseDto = new AssignTicketResponseDto();
-        responseDto.setId(ticket.getId());
         responseDto.setTicketId(ticket.getId());
         responseDto.setTicketNumber(ticket.getTicketNumber());
         responseDto.setAgent(mapToUserRegisterDto(ticket.getAgent()));
