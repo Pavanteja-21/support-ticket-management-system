@@ -1,9 +1,6 @@
 package com.example.supportTicketManagement.controller;
 
-import com.example.supportTicketManagement.dto.CommentRequestDto;
-import com.example.supportTicketManagement.dto.CommentResponseDto;
-import com.example.supportTicketManagement.dto.CreateTicketResponseDto;
-import com.example.supportTicketManagement.dto.TicketStatusResponseDto;
+import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.service.TicketService;
 import jakarta.validation.Valid;
@@ -24,8 +21,19 @@ public class EmployeeController {
     private final TicketService ticketService;
     private final CommentService commentService;
 
+    // Only Employee can create the ticket
+    @PostMapping("/add/ticket")
+    public ResponseEntity<CreateTicketResponseDto> createTicket(@RequestBody @Valid
+                                                                CreateTicketRequestDto requestDto) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ticketService.createTicket(requestDto));
+
+    }
+
     // Gets all tickets created by employee
-    @GetMapping("/mytickets")
+     @GetMapping("/tickets")
     public ResponseEntity<List<CreateTicketResponseDto>> getAllMyTickets() {
         return ResponseEntity
                 .ok(ticketService.findAllMyTicktets());
