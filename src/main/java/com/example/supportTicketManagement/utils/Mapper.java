@@ -1,8 +1,6 @@
 package com.example.supportTicketManagement.utils;
 
-import com.example.supportTicketManagement.dto.CreateTicketResponseDto;
-import com.example.supportTicketManagement.dto.RoleResponseDto;
-import com.example.supportTicketManagement.dto.UserResponseDto;
+import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.entity.Role;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.entity.User;
@@ -55,4 +53,28 @@ public class Mapper {
 
         return responseDto;
     }
+
+    // This method is used to map the Ticket entity to AssignTicketResponseDto
+    public AssignTicketResponseDto mapToAssignTicket(Ticket ticket) {
+        AssignTicketResponseDto responseDto = new AssignTicketResponseDto();
+        responseDto.setTicketId(ticket.getId());
+        responseDto.setTicketNumber(ticket.getTicketNumber());
+        responseDto.setAgent(mapToUserRegisterDto(ticket.getAgent()));
+        responseDto.setStatus(ticket.getStatus());
+
+        return responseDto;
+    }
+
+    // This method is used to map the Ticket entity to AgentTicketResponseDto
+    public AgentTicketResponseDto mapToAgentTicket(Ticket ticket) {
+        AgentTicketResponseDto responseDto = new AgentTicketResponseDto();
+        responseDto.setTicketNumber(ticket.getTicketNumber());
+        responseDto.setTitle(ticket.getTitle());
+        responseDto.setDescription(ticket.getDescription());
+        responseDto.setPriority(ticket.getPriority());
+        responseDto.setStatus(ticket.getStatus());
+
+        return responseDto;
+    }
+
 }

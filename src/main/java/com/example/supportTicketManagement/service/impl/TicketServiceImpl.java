@@ -1,10 +1,11 @@
 package com.example.supportTicketManagement.service.impl;
 
-import com.example.supportTicketManagement.dto.CreateTicketRequestDto;
-import com.example.supportTicketManagement.dto.CreateTicketResponseDto;
+import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.entity.User;
 import com.example.supportTicketManagement.enums.Status;
+import com.example.supportTicketManagement.exception.TicketClosedException;
+import com.example.supportTicketManagement.exception.TicketNotFoundException;
 import com.example.supportTicketManagement.repository.TicketRepository;
 import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.TicketService;
@@ -16,7 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -57,13 +60,8 @@ public class TicketServiceImpl implements TicketService {
 
     // Gets all created tickets
     @Override
-    public List<CreateTicketResponseDto> findAllTickets() {
-
-        List<Ticket> tickets = ticketRepository.findAll();
-
-        return tickets.stream()
-                .map(mapper::mapToCreateTicket)
-                .toList();
+    public List<Ticket> findAllTickets() {
+        return ticketRepository.findAll();
     }
 
     // Gets all tickets created by specific employee
@@ -80,6 +78,43 @@ public class TicketServiceImpl implements TicketService {
 
         return  tickets.stream()
                 .map(mapper::mapToCreateTicket)
+                .toList();
+    }
+
+    // Assigning Tickets to Agents
+    @Override
+    public AssignTicketResponseDto assignTicketToAgent(Long ticketId, Long agentId) {
+
+        User agent = userRepository.findById(agentId)
+                .orElseThrow(() -> new UsernameNotFoundException("Agent not found"));
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
+
+        if(ticket.getStatus().equals(Status.CLOSED)) {
+            throw new TicketClosedException("Ticket is already closed");
+        }
+
+        ticket.setAgent(agent);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        return mapper.mapToAssignTicket(savedTicket);
+    }
+
+    // Gets all tickets assigned to specific agent
+    @Override
+    public List<AgentTicketResponseDto> findAllMyAgentTickets() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        List<Ticket> tickets = ticketRepository.findByAgentId(user.getId());
+
+        return tickets.stream()
+                .map(mapper::mapToAgentTicket)
                 .toList();
     }
 

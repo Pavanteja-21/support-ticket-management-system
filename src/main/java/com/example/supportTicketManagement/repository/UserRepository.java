@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     """)
     List<User> findUsersByRole(@Param("roleName") String roleName, Pageable pageable);
 
-    // Returns all the users by employee email
+    // Returns the user by employee email
     @Query("""
         SELECT DISTINCT u
         FROM User u
@@ -35,4 +35,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
           AND r.roleName = 'EMPLOYEE'
         """)
     Optional<User> findEmployeeByEmail(@Param("email") String email);
+
+    // Returns the user by agent email
+    @Query("""
+        SELECT DISTINCT u
+        FROM User u
+        JOIN u.roles r
+        WHERE u.email = :email
+          AND r.roleName = 'SUPPORT_AGENT'
+        """)
+    Optional<User> findAgentByEmail(String email);
 }

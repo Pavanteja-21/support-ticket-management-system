@@ -1,6 +1,6 @@
 package com.example.supportTicketManagement.controller;
 
-import com.example.supportTicketManagement.dto.CreateTicketResponseDto;
+import com.example.supportTicketManagement.dto.AgentTicketResponseDto;
 import com.example.supportTicketManagement.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,17 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employee")
-@PreAuthorize("hasRole('EMPLOYEE')")
+@RequestMapping("/api/agent")
+@PreAuthorize("hasRole('SUPPORT_AGENT')")
 @RequiredArgsConstructor
-public class EmployeeController {
+public class AgentController {
 
     private final TicketService ticketService;
 
-    // Gets all tickets created by employee
-    @GetMapping("/mytickets")
-    public ResponseEntity<List<CreateTicketResponseDto>> getAllMyTickets() {
+    @GetMapping("/tickets")
+    public ResponseEntity<List<AgentTicketResponseDto>> findAllMyAgentTickets(){
         return ResponseEntity
-                .ok(ticketService.findAllMyTicktets());
+                .ok(ticketService.findAllMyAgentTickets());
     }
 }

@@ -9,4 +9,7 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
     // Gets all the tickets by employeeId
     List<Ticket> findByEmployeeId(Long userId);
+
+    // Gets all the tickets by agentId
+    List<Ticket> findByAgentId(Long agentId);
 }
