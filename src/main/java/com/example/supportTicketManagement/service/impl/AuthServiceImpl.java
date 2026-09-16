@@ -14,6 +14,8 @@ import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.AuthService;
 import com.example.supportTicketManagement.utils.Mapper;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +28,13 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final Mapper mapper;
 
+    private final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
+
     // This method is used to register the user in db
     @Override
     public UserResponseDto register(UserRegisterDto registerRequestDto) {
+        log.info("Inside AuthService.register() method");
+
         User user = new User();
         user.setFirstName(registerRequestDto.getFirstName());
         user.setLastName(registerRequestDto.getLastName());
@@ -38,15 +44,21 @@ public class AuthServiceImpl implements AuthService {
         boolean exists = userRepository.existsByEmail(registerRequestDto.getEmail());
 
         if(exists){
+            log.info("Threw EmailAlreadyExistsException as email already exists in AuthService.register()");
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
         Role role = roleRepository.findByRoleName(registerRequestDto.getRoleName())
-                .orElseThrow(() -> new RoleNotFoundException("Role is not found"));
+                .orElseThrow(() -> {
+                    log.info("Threw RoleNotFoundException as role not found in AuthService.register()");
+                    return new RoleNotFoundException("Role is not found");
+                });
 
         user.getRoles().add(role);
 
         User savedUser = userRepository.save(user);
+
+        log.info("Successfully saved the user in db, end of the AuthService.register() method");
 
         return mapper.mapToUserRegisterDto(savedUser);
     }
@@ -54,9 +66,12 @@ public class AuthServiceImpl implements AuthService {
     // This method is used to add the role in db
     @Override
     public RoleResponseDto addRole(RoleRequestDto roleRequestDto) {
+        log.info("Inside AuthService.addRole() method");
+
         boolean exists = roleRepository.existsByRoleName(roleRequestDto.getRoleName());
 
         if(exists){
+            log.info("Threw RoleNotFoundException as role not found in AuthService.addRole()");
             throw new RoleAlreadyExistsException("Role already exists");
         }
 
@@ -64,6 +79,8 @@ public class AuthServiceImpl implements AuthService {
         role.setRoleName(roleRequestDto.getRoleName());
 
         Role savedRole = roleRepository.save(role);
+
+        log.info("Successfully saved the role in db, end of the AuthService.addRole() method");
 
         return mapper.mapToRoleDto(savedRole);
     }

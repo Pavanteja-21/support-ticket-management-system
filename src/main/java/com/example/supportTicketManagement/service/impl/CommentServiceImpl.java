@@ -12,6 +12,8 @@ import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.utils.Mapper;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,19 +28,28 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final Mapper mapper;
 
+    private final Logger log = LoggerFactory.getLogger(CommentServiceImpl.class);
+
     // Used to create a comment to ticket created by employee
     @Override
     public CommentResponseDto createEmployeeComment(CommentRequestDto requestDto, Long ticketId) {
+        log.info("Inside CommentService.createEmployeeComment() method");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> {
+                    log.info("Threw UsernameNotFoundException as user is not found with email in CommentService.createEmployeeComment()");
+                    return new UsernameNotFoundException("Username not found");
+                });
 
         Ticket ticket = ticketRepository.findByIdAndEmployeeId(ticketId, user.getId())
-                .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
+                .orElseThrow(() -> {
+                    log.info("Threw TikcetNotFoundException as ticket is not found in CommentService.createEmployeeComment()");
+                    return new TicketNotFoundException("Ticket not found");
+                });
 
         Comment comment = new Comment();
         comment.setComment(requestDto.getComment());
@@ -46,6 +57,8 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user);
 
         Comment savedComment = commentsRepository.save(comment);
+
+        log.info("Successfully saved the comment in db, end of the AuthService.createEmployeeComment() method");
 
         return mapper.mapToCommentDto(savedComment);
     }
@@ -53,16 +66,24 @@ public class CommentServiceImpl implements CommentService {
     // Used to create a comment to ticket that is assigned to agent
     @Override
     public CommentResponseDto createAgentComment(CommentRequestDto requestDto, Long ticketId) {
+        log.info("Inside CommentService.createAgentComment() method");
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> {
+                    log.info("Threw UsernameNotFoundException as user is not found with email in CommentService.createAgentComment()");
+                    return new UsernameNotFoundException("Username not found");
+                });
 
         Ticket ticket = ticketRepository.findByIdAndAgentId(ticketId, user.getId())
-                .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
+                .orElseThrow(() -> {
+                    log.info("Threw TikcetNotFoundException as ticket is not found in CommentService.createAgentComment()");
+                    return new TicketNotFoundException("Ticket not found");
+                });
 
         Comment comment = new Comment();
         comment.setComment(requestDto.getComment());
@@ -70,6 +91,8 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user);
 
         Comment savedComment = commentsRepository.save(comment);
+
+        log.info("Successfully saved the comment in db, end of the AuthService.createAgentComment() method");
 
         return mapper.mapToCommentDto(savedComment);
     }
