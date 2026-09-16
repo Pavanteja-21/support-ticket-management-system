@@ -5,6 +5,7 @@ import com.example.supportTicketManagement.dto.TicketResponseDto;
 import com.example.supportTicketManagement.dto.UserResponseDto;
 import com.example.supportTicketManagement.service.AdminService;
 import com.example.supportTicketManagement.service.TicketService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class AdminController {
     private final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     // Get the Response for all the users of employee role
+    @Operation(summary = "View All Employees", description = "Only Admin can get the Response for all the users of employee role")
     @GetMapping("/employees")
     public ResponseEntity<List<UserResponseDto>> findAllEmployees(@RequestParam int page, @RequestParam int size) {
         log.info("Request entered '/api/admin/employees', findAllEmployees() method is called");
@@ -33,6 +35,7 @@ public class AdminController {
     }
 
     // Get the Response for all the users of support agent role
+    @Operation(summary = "View All Agents", description = "Only Admin can get the Response for all the users of support agent role")
     @GetMapping("/agents")
     public ResponseEntity<List<UserResponseDto>> findAllAgents(@RequestParam int page, @RequestParam int size) {
         log.info("Request entered '/api/admin/agents', findAllAgents() method is called");
@@ -40,6 +43,7 @@ public class AdminController {
     }
 
     // Only Admin can view all the created tickets
+    @Operation(summary = "View All Tickets", description = "Only Admin can view all created tickets")
     @GetMapping("/tickets")
     public ResponseEntity<List<TicketResponseDto>> getAllTickets() {
         log.info("Request entered '/api/admin/tickets', getAllTickets() method is called");
@@ -48,6 +52,7 @@ public class AdminController {
     }
 
     // Only Admin can assign the ticket to agent
+    @Operation(summary = "Assign Ticket", description = "Only Admin can assign the ticket to a agent")
     @PatchMapping("/ticket/{ticketId}/assign/{agentId}")
     public ResponseEntity<AssignTicketResponseDto> assignTicketToAgent(@PathVariable Long ticketId,
                                                                        @PathVariable Long agentId) {

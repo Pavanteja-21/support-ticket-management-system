@@ -3,6 +3,7 @@ package com.example.supportTicketManagement.controller;
 import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.service.TicketService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class EmployeeController {
     private final Logger log = LoggerFactory.getLogger(EmployeeController.class);
 
     // Only Employee can create the ticket
+    @Operation(summary = "Create Ticket", description = "Only Employee can create their ticket")
     @PostMapping("/add/ticket")
     public ResponseEntity<CreateTicketResponseDto> createTicket(@RequestBody @Valid
                                                                 CreateTicketRequestDto requestDto) {
@@ -37,7 +39,8 @@ public class EmployeeController {
     }
 
     // Gets all tickets created by employee
-     @GetMapping("/tickets")
+    @Operation(summary = "View Created Tickets", description = "Only Employee can view their created tickets")
+    @GetMapping("/tickets")
     public ResponseEntity<List<CreateTicketResponseDto>> getAllMyTickets() {
          log.info("Request entered '/api/employee/tickets', getAllMyTickets() method is called");
         return ResponseEntity
@@ -45,6 +48,7 @@ public class EmployeeController {
     }
 
     // Employee can add comment to his ticket
+    @Operation(summary = "Add Comment", description = "Employee can add comment to his ticket")
     @PostMapping("/{ticketId}/add/comment")
     public ResponseEntity<CommentResponseDto> addComment(@RequestBody @Valid
                                                              CommentRequestDto requestDto,
@@ -55,7 +59,8 @@ public class EmployeeController {
                 .body(commentService.createEmployeeComment(requestDto, ticketId));
     }
 
-    // Employee can close the resolved tickets
+    // Employee can close their resolved tickets
+    @Operation(summary = "Close Ticket", description = "Employee can close their resolved tickets")
     @PatchMapping("/{ticketId}/close")
     public ResponseEntity<TicketStatusResponseDto> closeTicket(@PathVariable Long ticketId) {
         log.info("Request entered '/api/employee/{}/close', closeTicket() method is called", ticketId);

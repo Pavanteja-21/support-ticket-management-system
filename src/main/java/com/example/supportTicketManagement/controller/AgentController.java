@@ -3,6 +3,7 @@ package com.example.supportTicketManagement.controller;
 import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.service.TicketService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class AgentController {
     private final Logger log = LoggerFactory.getLogger(AgentController.class);
 
     // Agent can view all his assigned tickets
+    @Operation(summary = "View Assigned Tickets", description = "Agent can view all his assigned tickets by Admin")
     @GetMapping("/tickets")
     public ResponseEntity<List<AgentTicketResponseDto>> findAllMyAgentTickets(){
         log.info("Request entered '/api/agent/tickets', findAllMyAgentTickets() method is called");
@@ -34,6 +36,7 @@ public class AgentController {
     }
 
     // Agent can update the status of his assigned tickets
+    @Operation(summary = "Update Status", description = "Agent can update the status of tickets that are assigned to him")
     @PatchMapping("/ticket/update/status")
     public ResponseEntity<TicketStatusResponseDto> updateTicketStatus(@RequestBody @Valid
                                                                            TicketStatusRequestDto requestDto){
@@ -43,7 +46,8 @@ public class AgentController {
 
     }
 
-    // Agent can add ticket
+    // Agent can add comment in ticket
+    @Operation(summary = "Add Comment", description = "Agent can add comment in the ticket that are assigned to him")
     @PostMapping("/{ticketId}/add/comment")
     public ResponseEntity<CommentResponseDto> createComment(@RequestBody @Valid CommentRequestDto requestDto,
                                                             @PathVariable Long ticketId) {
