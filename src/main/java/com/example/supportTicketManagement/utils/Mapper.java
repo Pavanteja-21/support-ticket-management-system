@@ -43,14 +43,14 @@ public class Mapper {
     // This method is used to map the Ticket entity to CreateTicketResponseDto
     public CreateTicketResponseDto mapToCreateTicket(Ticket ticket) {
         CreateTicketResponseDto responseDto = new CreateTicketResponseDto();
-        responseDto.setId(ticket.getId());
+        responseDto.setTicketId(ticket.getId());
         responseDto.setTicketNumber(ticket.getTicketNumber());
         responseDto.setTitle(ticket.getTitle());
         responseDto.setDescription(ticket.getDescription());
         responseDto.setPriority(ticket.getPriority());
         responseDto.setStatus(ticket.getStatus());
         responseDto.setCreatedAt(ticket.getCreatedAt());
-        responseDto.setEmployee(mapToUserRegisterDto(ticket.getEmployee()));
+//        responseDto.setEmployee(mapToUserRegisterDto(ticket.getEmployee()));
 
         return responseDto;
     }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateTicketResponseDto {
-    private Long id;
+    private Long ticketId;
 
     private String ticketNumber;
 
@@ -28,5 +28,5 @@ public class CreateTicketResponseDto {
 
     private LocalDateTime createdAt;
 
-    private UserResponseDto employee;
+//    private UserResponseDto employee;
 }
