@@ -5,6 +5,8 @@ import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +23,12 @@ public class AgentController {
     private final TicketService ticketService;
     private final CommentService commentService;
 
+    private final Logger log = LoggerFactory.getLogger(AgentController.class);
+
     // Agent can view all his assigned tickets
     @GetMapping("/tickets")
     public ResponseEntity<List<AgentTicketResponseDto>> findAllMyAgentTickets(){
+        log.info("Request entered '/api/agent/tickets', findAllMyAgentTickets() method is called");
         return ResponseEntity
                 .ok(ticketService.findAllMyAgentTickets());
     }
@@ -32,7 +37,7 @@ public class AgentController {
     @PatchMapping("/ticket/update/status")
     public ResponseEntity<TicketStatusResponseDto> updateTicketStatus(@RequestBody @Valid
                                                                            TicketStatusRequestDto requestDto){
-
+        log.info("Request entered '/api/agent/ticket/update/status', updateTicketStatus() method is called");
         return  ResponseEntity
                 .ok(ticketService.updateTicketStatus(requestDto));
 
@@ -42,7 +47,7 @@ public class AgentController {
     @PostMapping("/{ticketId}/add/comment")
     public ResponseEntity<CommentResponseDto> createComment(@RequestBody @Valid CommentRequestDto requestDto,
                                                             @PathVariable Long ticketId) {
-
+        log.info("Request entered '/api/agent/{}/add/comment', createComment() method is called", ticketId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(commentService.createAgentComment(requestDto, ticketId));

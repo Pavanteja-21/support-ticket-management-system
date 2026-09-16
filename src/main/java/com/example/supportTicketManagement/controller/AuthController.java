@@ -5,6 +5,8 @@ import com.example.supportTicketManagement.security.JwtService;
 import com.example.supportTicketManagement.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,10 +29,13 @@ public class AuthController {
 
     private final JwtService jwtService;
 
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     // Only Admin can able to register a new user
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRegisterDto requestDto) {
+        log.info("Request entered '/api/auth/register', register() method is called");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authService.register(requestDto));
     }
@@ -38,6 +43,7 @@ public class AuthController {
     // This is used for login
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto requestDto) {
+        log.info("Request entered '/api/auth/login', login() method is called");
         Authentication authRequest =
                 new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword());
 
@@ -52,6 +58,7 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/role")
     public ResponseEntity<RoleResponseDto> addRole(@RequestBody @Valid RoleRequestDto requestDto) {
+        log.info("Request entered '/api/auth/role', addRole() method is called");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authService.addRole(requestDto));
     }

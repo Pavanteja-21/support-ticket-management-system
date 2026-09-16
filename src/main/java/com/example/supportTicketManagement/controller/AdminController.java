@@ -3,10 +3,11 @@ package com.example.supportTicketManagement.controller;
 import com.example.supportTicketManagement.dto.AssignTicketResponseDto;
 import com.example.supportTicketManagement.dto.TicketResponseDto;
 import com.example.supportTicketManagement.dto.UserResponseDto;
-import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.service.AdminService;
 import com.example.supportTicketManagement.service.TicketService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,21 +23,26 @@ public class AdminController {
     private final AdminService adminService;
     private final TicketService ticketService;
 
+    private final Logger log = LoggerFactory.getLogger(AdminController.class);
+
     // Get the Response for all the users of employee role
     @GetMapping("/employees")
     public ResponseEntity<List<UserResponseDto>> findAllEmployees(@RequestParam int page, @RequestParam int size) {
+        log.info("Request entered '/api/admin/employees', findAllEmployees() method is called");
         return ResponseEntity.ok(adminService.getAllEmployees(page, size));
     }
 
     // Get the Response for all the users of support agent role
     @GetMapping("/agents")
     public ResponseEntity<List<UserResponseDto>> findAllAgents(@RequestParam int page, @RequestParam int size) {
+        log.info("Request entered '/api/admin/agents', findAllAgents() method is called");
         return ResponseEntity.ok(adminService.getAllAgents(page, size));
     }
 
     // Only Admin can view all the created tickets
     @GetMapping("/tickets")
     public ResponseEntity<List<TicketResponseDto>> getAllTickets() {
+        log.info("Request entered '/api/admin/tickets', getAllTickets() method is called");
         return ResponseEntity
                 .ok(ticketService.findAllTickets());
     }
@@ -45,7 +51,7 @@ public class AdminController {
     @PatchMapping("/ticket/{ticketId}/assign/{agentId}")
     public ResponseEntity<AssignTicketResponseDto> assignTicketToAgent(@PathVariable Long ticketId,
                                                                        @PathVariable Long agentId) {
-
+        log.info("Request entered '/ticket/{}/assign/{}', assignTicketToAgent() method is called", ticketId, agentId);
         return ResponseEntity
                 .ok(ticketService.assignTicketToAgent(ticketId, agentId));
 

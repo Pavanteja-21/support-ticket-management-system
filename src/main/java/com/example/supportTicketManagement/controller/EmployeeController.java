@@ -5,6 +5,8 @@ import com.example.supportTicketManagement.service.CommentService;
 import com.example.supportTicketManagement.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,11 +23,13 @@ public class EmployeeController {
     private final TicketService ticketService;
     private final CommentService commentService;
 
+    private final Logger log = LoggerFactory.getLogger(EmployeeController.class);
+
     // Only Employee can create the ticket
     @PostMapping("/add/ticket")
     public ResponseEntity<CreateTicketResponseDto> createTicket(@RequestBody @Valid
                                                                 CreateTicketRequestDto requestDto) {
-
+        log.info("Request entered '/api/employee/add/ticket', createTicket() method is called");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ticketService.createTicket(requestDto));
@@ -35,6 +39,7 @@ public class EmployeeController {
     // Gets all tickets created by employee
      @GetMapping("/tickets")
     public ResponseEntity<List<CreateTicketResponseDto>> getAllMyTickets() {
+         log.info("Request entered '/api/employee/tickets', getAllMyTickets() method is called");
         return ResponseEntity
                 .ok(ticketService.findAllMyTicktets());
     }
@@ -44,6 +49,7 @@ public class EmployeeController {
     public ResponseEntity<CommentResponseDto> addComment(@RequestBody @Valid
                                                              CommentRequestDto requestDto,
                                                          @PathVariable Long ticketId) {
+        log.info("Request entered '/api/employee/{}/add/comment', addComment() method is called", ticketId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(commentService.createEmployeeComment(requestDto, ticketId));
@@ -52,7 +58,7 @@ public class EmployeeController {
     // Employee can close the resolved tickets
     @PatchMapping("/{ticketId}/close")
     public ResponseEntity<TicketStatusResponseDto> closeTicket(@PathVariable Long ticketId) {
-
+        log.info("Request entered '/api/employee/{}/close', closeTicket() method is called", ticketId);
         return ResponseEntity
                 .ok(ticketService.closeTicketStatus(ticketId));
     }
