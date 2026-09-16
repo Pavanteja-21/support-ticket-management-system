@@ -7,6 +7,7 @@ import com.example.supportTicketManagement.enums.Status;
 import com.example.supportTicketManagement.exception.TicketCannotClosedException;
 import com.example.supportTicketManagement.exception.TicketClosedException;
 import com.example.supportTicketManagement.exception.TicketNotFoundException;
+import com.example.supportTicketManagement.exception.UserNotFoundException;
 import com.example.supportTicketManagement.repository.TicketRepository;
 import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.TicketService;
@@ -61,8 +62,12 @@ public class TicketServiceImpl implements TicketService {
 
     // Gets all created tickets
     @Override
-    public List<Ticket> findAllTickets() {
-        return ticketRepository.findAll();
+    public List<TicketResponseDto> findAllTickets() {
+        List<Ticket> tickets = ticketRepository.findAll();
+
+        return tickets.stream()
+                .map(mapper::mapToTicketResponseDto)
+                .toList();
     }
 
     // Gets all tickets created by specific employee
@@ -73,7 +78,7 @@ public class TicketServiceImpl implements TicketService {
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
 
         List<Ticket> tickets = ticketRepository.findByEmployeeId(user.getId());
 
@@ -87,7 +92,7 @@ public class TicketServiceImpl implements TicketService {
     public AssignTicketResponseDto assignTicketToAgent(Long ticketId, Long agentId) {
 
         User agent = userRepository.findById(agentId)
-                .orElseThrow(() -> new UsernameNotFoundException("Agent not found"));
+                .orElseThrow(() -> new UserNotFoundException("Agent not found"));
 
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
@@ -110,7 +115,7 @@ public class TicketServiceImpl implements TicketService {
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
 
         List<Ticket> tickets = ticketRepository.findByAgentId(user.getId());
 
@@ -128,7 +133,7 @@ public class TicketServiceImpl implements TicketService {
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
 
         Ticket ticket = ticketRepository.findByIdAndAgentId(requestDto.getTicketId(), user.getId())
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
@@ -159,7 +164,7 @@ public class TicketServiceImpl implements TicketService {
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UserNotFoundException("User is not found"));
 
         Ticket ticket = ticketRepository.findByIdAndEmployeeId(ticketId, user.getId())
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));

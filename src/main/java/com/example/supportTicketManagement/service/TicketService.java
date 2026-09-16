@@ -9,7 +9,7 @@ public interface TicketService {
 
     CreateTicketResponseDto createTicket(CreateTicketRequestDto requestDto);
 
-    List<Ticket> findAllTickets();
+    List<TicketResponseDto> findAllTickets();
 
     List<CreateTicketResponseDto> findAllMyTicktets();
 

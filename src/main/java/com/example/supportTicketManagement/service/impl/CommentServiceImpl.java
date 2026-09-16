@@ -6,6 +6,7 @@ import com.example.supportTicketManagement.entity.Comment;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.entity.User;
 import com.example.supportTicketManagement.exception.TicketNotFoundException;
+import com.example.supportTicketManagement.exception.UserNotFoundException;
 import com.example.supportTicketManagement.repository.CommentsRepository;
 import com.example.supportTicketManagement.repository.TicketRepository;
 import com.example.supportTicketManagement.repository.UserRepository;
@@ -35,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UserNotFoundException("Username not found"));
 
         Ticket ticket = ticketRepository.findByIdAndEmployeeId(ticketId, user.getId())
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));
@@ -59,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UserNotFoundException("Username not found"));
 
         Ticket ticket = ticketRepository.findByIdAndAgentId(ticketId, user.getId())
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found"));

@@ -1,6 +1,7 @@
 package com.example.supportTicketManagement.controller;
 
 import com.example.supportTicketManagement.dto.AssignTicketResponseDto;
+import com.example.supportTicketManagement.dto.TicketResponseDto;
 import com.example.supportTicketManagement.dto.UserResponseDto;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.service.AdminService;
@@ -35,7 +36,7 @@ public class AdminController {
 
     // Only Admin can view all the created tickets
     @GetMapping("/tickets")
-    public ResponseEntity<List<Ticket>> getAllTickets() {
+    public ResponseEntity<List<TicketResponseDto>> getAllTickets() {
         return ResponseEntity
                 .ok(ticketService.findAllTickets());
     }

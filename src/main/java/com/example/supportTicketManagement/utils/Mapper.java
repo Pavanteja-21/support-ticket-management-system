@@ -105,5 +105,21 @@ public class Mapper {
 
         return responseDto;
     }
+    // This method is used to map the Ticket entity to TicketResponseDto
+    public TicketResponseDto mapToTicketResponseDto(Ticket ticket) {
+        TicketResponseDto responseDto = new TicketResponseDto();
+        responseDto.setId(ticket.getId());
+        responseDto.setTicketNumber(ticket.getTicketNumber());
+        responseDto.setTitle(ticket.getTitle());
+        responseDto.setDescription(ticket.getDescription());
+        responseDto.setPriority(ticket.getPriority());
+        responseDto.setStatus(ticket.getStatus());
+        responseDto.setCreatedAt(ticket.getCreatedAt());
+        responseDto.setUpdatedAt(ticket.getUpdatedAt());
+        responseDto.setEmployee(ticket.getEmployee().getFirstName() + " " + ticket.getEmployee().getLastName());
+        responseDto.setAgent(ticket.getAgent().getFirstName() + " " + ticket.getAgent().getLastName());
+
+        return responseDto;
+    }
 
 }
