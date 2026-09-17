@@ -5,6 +5,7 @@ import com.example.supportTicketManagement.dto.RoleResponseDto;
 import com.example.supportTicketManagement.dto.UserResponseDto;
 import com.example.supportTicketManagement.entity.Role;
 import com.example.supportTicketManagement.entity.User;
+import com.example.supportTicketManagement.exception.RoleAlreadyExistsException;
 import com.example.supportTicketManagement.repository.RoleRepository;
 import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.impl.AdminServiceImpl;
@@ -113,5 +114,22 @@ public class AdminServiceTest {
 
         verify(roleRepository).save(any(Role.class));
         verify(mapper).mapToRoleDto(role);
+    }
+
+    // Test case passes if role name is already exists
+    @Test
+    void shouldThrowRoleNotFoundException() {
+        when(roleRepository.existsByRoleName("ADMIN")).thenReturn(true);
+
+        RoleRequestDto request = new RoleRequestDto("ADMIN");
+
+        RoleAlreadyExistsException ex = assertThrows(
+                RoleAlreadyExistsException.class,
+                () -> adminService.addRole(request)
+        );
+
+        assertEquals("Role already exists", ex.getMessage());
+
+        verify(roleRepository).existsByRoleName("ADMIN");
     }
 }
