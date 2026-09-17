@@ -1,14 +1,17 @@
 package com.example.supportTicketManagement.controller;
 
-import com.example.supportTicketManagement.dto.AssignTicketResponseDto;
-import com.example.supportTicketManagement.dto.TicketResponseDto;
-import com.example.supportTicketManagement.dto.UserResponseDto;
+import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.service.AdminService;
 import com.example.supportTicketManagement.service.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,17 @@ public class AdminController {
     private final TicketService ticketService;
 
     private final Logger log = LoggerFactory.getLogger(AdminController.class);
+
+    // Only Admin can add roles
+    @Operation(summary = "Add Role", description = "Only Admin can add roles")
+    @ApiResponse(responseCode = "201",content = {@Content(mediaType = "\"application/json",
+            schema = @Schema(implementation = RoleResponseDto.class))})
+    @PostMapping("/role")
+    public ResponseEntity<RoleResponseDto> addRole(@RequestBody @Valid RoleRequestDto requestDto) {
+        log.info("Request entered '/api/auth/role', addRole() method is called");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(adminService.addRole(requestDto));
+    }
 
     // Get the Response for all the users of employee role
     @Operation(summary = "View All Employees", description = "Only Admin can get the Response for all the users of employee role")

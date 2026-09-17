@@ -63,28 +63,4 @@ public class AuthServiceImpl implements AuthService {
         return mapper.mapToUserRegisterDto(savedUser);
     }
 
-    // This method is used to add the role in db
-    @Override
-    public RoleResponseDto addRole(RoleRequestDto roleRequestDto) {
-        log.info("Inside AuthService.addRole() method");
-
-        boolean exists = roleRepository.existsByRoleName(roleRequestDto.getRoleName());
-
-        if(exists){
-            log.info("Threw RoleNotFoundException as role not found in AuthService.addRole()");
-            throw new RoleAlreadyExistsException("Role already exists");
-        }
-
-        Role role = new Role();
-        role.setRoleName(roleRequestDto.getRoleName());
-
-        Role savedRole = roleRepository.save(role);
-
-        log.info("Successfully saved the role in db, end of the AuthService.addRole() method");
-
-        return mapper.mapToRoleDto(savedRole);
-    }
-
-
-
 }

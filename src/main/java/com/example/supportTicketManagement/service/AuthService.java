@@ -7,5 +7,4 @@ import com.example.supportTicketManagement.dto.RoleResponseDto;
 
 public interface AuthService {
     UserResponseDto register(UserRegisterDto registerRequestDto);
-    RoleResponseDto addRole(RoleRequestDto roleRequestDto);
 }

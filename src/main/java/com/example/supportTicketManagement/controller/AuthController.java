@@ -65,17 +65,7 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
-    // Only Admin can add roles
-    @Operation(summary = "Add Role", description = "Only Admin can add roles")
-    @ApiResponse(responseCode = "201",content = {@Content(mediaType = "\"application/json",
-            schema = @Schema(implementation = RoleResponseDto.class))})
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/role")
-    public ResponseEntity<RoleResponseDto> addRole(@RequestBody @Valid RoleRequestDto requestDto) {
-        log.info("Request entered '/api/auth/role', addRole() method is called");
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authService.addRole(requestDto));
-    }
+
 
 
 }
