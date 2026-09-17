@@ -9,20 +9,15 @@ import com.example.supportTicketManagement.repository.RoleRepository;
 import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.impl.AdminServiceImpl;
 import com.example.supportTicketManagement.utils.Mapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,6 +34,7 @@ public class AdminServiceTest {
     @InjectMocks
     private AdminServiceImpl adminService;
 
+    // Test can passes if all employees are returned from db
     @Test
     void shouldReturnAllEmployees() {
        int page = 0, size = 10;
@@ -61,14 +57,15 @@ public class AdminServiceTest {
 
        assertNotNull(result);
        assertEquals(1, result.size());
-       assertEquals(userResponseDto.getFirstName(),result.get(0).getFirstName());
-       assertEquals(userResponseDto.isActive(),result.get(0).isActive());
-       assertEquals(userResponseDto,result.get(0));
+       assertEquals(userResponseDto.getFirstName(),result.getFirst().getFirstName());
+       assertEquals(userResponseDto.isActive(),result.getFirst().isActive());
+       assertEquals(userResponseDto,result.getFirst());
 
        verify(userRepository).findUsersByRole("EMPLOYEE", pageable);
        verify(mapper).mapToUserRegisterDto(user);
     }
 
+    // Test can passes if all agents are returned from db
     @Test
     void shouldReturnAllAgents() {
         int page = 0, size = 10;
@@ -91,14 +88,15 @@ public class AdminServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(userResponseDto.getFirstName(),result.get(0).getFirstName());
-        assertEquals(userResponseDto.isActive(),result.get(0).isActive());
-        assertEquals(userResponseDto,result.get(0));
+        assertEquals(userResponseDto.getFirstName(),result.getFirst().getFirstName());
+        assertEquals(userResponseDto.isActive(),result.getFirst().isActive());
+        assertEquals(userResponseDto,result.getFirst());
 
         verify(userRepository).findUsersByRole("SUPPORT_AGENT", pageable);
         verify(mapper).mapToUserRegisterDto(user);
     }
 
+    // Test can passes if role is added in db
     @Test
     void shouldAddRole() {
         Role role = new Role(1L, "ADMIN");
