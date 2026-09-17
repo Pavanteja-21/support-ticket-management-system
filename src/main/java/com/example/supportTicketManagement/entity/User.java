@@ -2,6 +2,7 @@ package com.example.supportTicketManagement.entity;
 
 import com.example.supportTicketManagement.security.Encryptor;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
