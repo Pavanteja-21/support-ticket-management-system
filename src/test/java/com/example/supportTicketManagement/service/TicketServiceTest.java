@@ -1,13 +1,13 @@
 package com.example.supportTicketManagement.service;
 
-import com.example.supportTicketManagement.dto.CreateTicketRequestDto;
-import com.example.supportTicketManagement.dto.CreateTicketResponseDto;
+import com.example.supportTicketManagement.dto.*;
 
-import com.example.supportTicketManagement.dto.TicketResponseDto;
 import com.example.supportTicketManagement.entity.Ticket;
 import com.example.supportTicketManagement.entity.User;
 import com.example.supportTicketManagement.enums.Priority;
 import com.example.supportTicketManagement.enums.Status;
+import com.example.supportTicketManagement.exception.TicketClosedException;
+import com.example.supportTicketManagement.exception.TicketNotFoundException;
 import com.example.supportTicketManagement.repository.TicketRepository;
 import com.example.supportTicketManagement.repository.UserRepository;
 import com.example.supportTicketManagement.service.impl.TicketServiceImpl;
@@ -22,12 +22,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -82,7 +82,6 @@ public class TicketServiceTest {
         createTicketResponseDto.setStatus(Status.OPEN);
         createTicketResponseDto.setDescription(ticket.getDescription());
         createTicketResponseDto.setTitle(ticket.getTitle());
-
     }
 
     // This is the cleanup for clearing SecurityContextHolder after executing all test cases.
@@ -163,4 +162,258 @@ public class TicketServiceTest {
         verify(mapper).mapToTicketResponseDto(ticket);
         verify(mapper).mapToTicketResponseDto(ticket1);
     }
+
+    // Test case passes if all tickets created by employee are returned from db
+    @Test
+    void shouldAbleToReturnAllTicketsCreatedByEmployee() {
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(employee.getEmail());
+
+        when(userRepository.findByEmail(employee.getEmail())).thenReturn(Optional.of(employee));
+
+        CreateTicketResponseDto response1 = new CreateTicketResponseDto();
+        response1.setTicketId(ticket.getId());
+        response1.setTicketNumber(ticket.getTicketNumber());
+        response1.setDescription(ticket.getDescription());
+        response1.setTitle(ticket.getTitle());
+        response1.setPriority(ticket.getPriority());
+
+        Ticket ticket1 = new Ticket();
+        ticket1.setId(1L);
+        ticket1.setTicketNumber("TKT-0002");
+        ticket1.setDescription("Hi");
+        ticket1.setTitle("Dummy");
+        ticket1.setPriority(Priority.HIGH);
+
+        CreateTicketResponseDto response2 = new CreateTicketResponseDto();
+        response2.setTicketId(ticket1.getId());
+        response2.setTicketNumber(ticket1.getTicketNumber());
+        response2.setDescription(ticket1.getDescription());
+        response2.setTitle(ticket1.getTitle());
+        response2.setPriority(ticket1.getPriority());
+
+        List<Ticket> tickets = List.of(ticket, ticket1);
+        when(ticketRepository.findByEmployeeId(employee.getId())).thenReturn(tickets);
+
+        when(mapper.mapToCreateTicket(ticket)).thenReturn(response1);
+        when(mapper.mapToCreateTicket(ticket1)).thenReturn(response2);
+
+        List<CreateTicketResponseDto> result = ticketService.findAllMyTicktets();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(response1, result.getFirst());
+        assertEquals(response2, result.getLast());
+
+        verify(userRepository).findByEmail(employee.getEmail());
+        verify(ticketRepository).findByEmployeeId(employee.getId());
+        verify(mapper).mapToCreateTicket(ticket);
+        verify(mapper).mapToCreateTicket(ticket1);
+    }
+
+    // Test case passes if admin is able to assign the ticket to agent
+    @Test
+    void shouldAbleToAssignTicketToAgent() {
+        AssignTicketResponseDto response  = new AssignTicketResponseDto();
+        response.setTicketId(ticket.getId());
+        response.setTicketNumber(ticket.getTicketNumber());
+        response.setStatus(Status.OPEN);
+
+        ticket.setStatus(Status.OPEN);
+
+        when(userRepository.findById(agent.getId())).thenReturn(Optional.of(agent));
+        when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+        when(mapper.mapToAssignTicket(ticket)).thenReturn(response);
+
+        AssignTicketResponseDto result = ticketService.assignTicketToAgent(ticket.getId(), agent.getId());
+
+        assertNotNull(result);
+        assertEquals(response,result);
+        assertEquals(response.getTicketNumber(),result.getTicketNumber());
+        assertEquals(response.getStatus(),result.getStatus());
+        assertEquals(response.getTicketNumber(),result.getTicketNumber());
+
+        verify(userRepository).findById(agent.getId());
+        verify(ticketRepository).findById(ticket.getId());
+        verify(ticketRepository).save(any(Ticket.class));
+        verify(mapper).mapToAssignTicket(ticket);
+    }
+
+    // Test case passes if all tickets that are assigned to agents are returned from db
+    @Test
+    void shouldAbleGetAllTicketsAssignedToAgent() {
+        AgentTicketResponseDto response1 = new AgentTicketResponseDto();
+        response1.setId(ticket.getId());
+        response1.setTicketNumber(ticket.getTicketNumber());
+        response1.setStatus(Status.OPEN);
+
+        ticket.setStatus(Status.OPEN);
+
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(agent.getEmail());
+
+        when(userRepository.findByEmail(agent.getEmail())).thenReturn(Optional.of(agent));
+
+        Ticket ticket1 = new Ticket();
+        ticket1.setId(1L);
+        ticket1.setTicketNumber("TKT-0002");
+        ticket1.setDescription("Hi");
+        ticket1.setTitle("Dummy");
+        ticket1.setPriority(Priority.HIGH);
+
+        AgentTicketResponseDto response2 = new AgentTicketResponseDto();
+        response2.setId(ticket1.getId());
+        response2.setTicketNumber(ticket1.getTicketNumber());
+        response2.setStatus(Status.OPEN);
+
+        List<Ticket> tickets = List.of(ticket, ticket1);
+
+        when(ticketRepository.findByAgentId(agent.getId())).thenReturn(tickets);
+
+        when(mapper.mapToAgentTicket(ticket)).thenReturn(response1);
+        when(mapper.mapToAgentTicket(ticket1)).thenReturn(response2);
+
+        List<AgentTicketResponseDto> result = ticketService.findAllMyAgentTickets();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(response1, result.getFirst());
+        assertEquals(response2, result.getLast());
+
+        verify(userRepository).findByEmail(agent.getEmail());
+        verify(ticketRepository).findByAgentId(agent.getId());
+        verify(mapper).mapToAgentTicket(ticket);
+        verify(mapper).mapToAgentTicket(ticket1);
+    }
+
+    // Test case passes if agent is able to update ticket that are assigned to him/her
+    @Test
+    void shouldAgentAbleToUpdateTicketStatus() {
+        TicketStatusResponseDto response = new TicketStatusResponseDto();
+        response.setId(ticket.getId());
+        response.setTicketNumber(ticket.getTicketNumber());
+        response.setStatus(Status.IN_PROGRESS);
+        response.setPriority(Priority.HIGH);
+
+        TicketStatusRequestDto requestDto = new TicketStatusRequestDto();
+        requestDto.setTicketId(ticket.getId());
+        requestDto.setStatus(Status.IN_PROGRESS);
+
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(agent.getEmail());
+
+        when(userRepository.findByEmail(agent.getEmail())).thenReturn(Optional.of(agent));
+        when(ticketRepository.findByIdAndAgentId(ticket.getId(), agent.getId())).thenReturn(Optional.of(ticket));
+
+        ticket.setStatus(Status.IN_PROGRESS);
+
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+        when(mapper.mapToTicketStatusDto(ticket)).thenReturn(response);
+
+        TicketStatusResponseDto result = ticketService.updateTicketStatus(requestDto);
+
+        assertNotNull(result);
+        assertEquals(response,result);
+        assertEquals(response.getTicketNumber(),result.getTicketNumber());
+        assertEquals(response.getStatus(),result.getStatus());
+        assertEquals(response.getStatus(),result.getStatus());
+        assertEquals(response.getPriority(),result.getPriority());
+
+        verify(userRepository).findByEmail(agent.getEmail());
+        verify(ticketRepository).findByIdAndAgentId(ticket.getId(),agent.getId());
+        verify(mapper).mapToTicketStatusDto(ticket);
+    }
+
+    // Test case passes if employee is able to close his/her created ticket
+    @Test
+    void shouldEmployeeAbleToCloseTicket() {
+        TicketStatusResponseDto response = new TicketStatusResponseDto();
+        response.setId(ticket.getId());
+        response.setTicketNumber(ticket.getTicketNumber());
+        response.setStatus(Status.CLOSED);
+        response.setPriority(Priority.HIGH);
+
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(employee.getEmail());
+
+        when(userRepository.findByEmail(employee.getEmail())).thenReturn(Optional.of(employee));
+        when(ticketRepository.findByIdAndEmployeeId(ticket.getId(), employee.getId())).thenReturn(Optional.of(ticket));
+
+        ticket.setStatus(Status.RESOLVED);
+
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+        when(mapper.mapToTicketStatusDto(ticket)).thenReturn(response);
+
+        TicketStatusResponseDto result = ticketService.closeTicketStatus(ticket.getId());
+        assertNotNull(result);
+        assertEquals(response,result);
+        assertEquals(response.getTicketNumber(),result.getTicketNumber());
+        assertEquals(response.getStatus(),result.getStatus());
+        assertEquals(response.getPriority(),result.getPriority());
+
+        verify(userRepository).findByEmail(employee.getEmail());
+        verify(ticketRepository).findByIdAndEmployeeId(ticket.getId(),employee.getId());
+        verify(ticketRepository).save(any(Ticket.class));
+    }
+
+    // Test case passes if it throws UsernameNotFoundException
+    @Test
+    void shouldThrowUsernameNotFoundExceptionIfEmployeeNotFound() {
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(employee.getEmail());
+
+        when(userRepository.findByEmail(employee.getEmail())).thenReturn(Optional.empty());
+
+        UsernameNotFoundException ex = assertThrows(
+                UsernameNotFoundException.class,
+                () -> ticketService.createTicket(new CreateTicketRequestDto())
+        );
+
+        assertEquals("Username not found", ex.getMessage());
+        verify(ticketRepository, never()).save(any(Ticket.class));
+    }
+
+    // Test case passes if it throws TicketNotFoundException
+    @Test
+    void shouldThrowTicketNotFoundException() {
+        when(userRepository.findById(agent.getId())).thenReturn(Optional.of(agent));
+        when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.empty());
+
+        TicketNotFoundException ex = assertThrows(
+                TicketNotFoundException.class,
+                () -> ticketService.assignTicketToAgent(ticket.getId(), agent.getId())
+        );
+
+        assertEquals("Ticket not found", ex.getMessage());
+
+        verify(ticketRepository, never()).save(any(Ticket.class));
+        verify(mapper, never()).mapToAssignTicket(ticket);
+    }
+
+    // Test case passes if it throws TicketClosedException
+    @Test
+    void shouldThrowTicketClosedException() {
+        when(userRepository.findById(agent.getId())).thenReturn(Optional.of(agent));
+        when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.of(ticket));
+
+        ticket.setStatus(Status.CLOSED);
+
+        TicketClosedException ex = assertThrows(
+                TicketClosedException.class,
+                () -> ticketService.assignTicketToAgent(ticket.getId(), agent.getId())
+        );
+
+        assertEquals("Ticket is already closed", ex.getMessage());
+
+        verify(ticketRepository, never()).save(any(Ticket.class));
+        verify(mapper, never()).mapToAssignTicket(ticket);
+    }
+
+
 }

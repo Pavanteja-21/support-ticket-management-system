@@ -54,7 +54,6 @@ public class CommentServiceTest {
     private CommentResponseDto  commentResponseDto;
     private CommentRequestDto commentRequestDto;
 
-    // This is the predefined setup required to execute in all test cases
     @BeforeEach
     void setup() {
         employee = new User();
