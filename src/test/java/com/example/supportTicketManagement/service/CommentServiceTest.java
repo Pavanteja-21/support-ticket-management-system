@@ -134,6 +134,7 @@ public class CommentServiceTest {
         verify(userRepository).findByEmail(agent.getEmail());
         verify(ticketRepository).findByIdAndEmployeeId(1L, agent.getId());
         verify(commentsRepository).save(any(Comment.class));
+        verify(mapper).mapToCommentDto(comment);
     }
 
     // Test case passes if it throws UsernameNotFoundException
