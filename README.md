@@ -2,7 +2,7 @@
 The application allows users to raise support tickets, support agents to work on tickets, and admins to manage users and view all tickets.
 
 ## Project Description
-The application should contain three roles.
+The application contains three roles.
 ### Admin
 Admin can perform:
 - Create users
