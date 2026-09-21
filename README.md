@@ -80,17 +80,24 @@ Once the application is running, you can interact with the following core endpoi
 
 | HTTP Method | Endpoint | Description | Auth Required | Role |
 
+### Auth API End Points
 - | `POST` | `/api/auth/register` | Only Admin can able to register a new user | **Yes** (Bearer Token) | ADMIN |
 - | `POST` | `/api/auth/login` | Login to receive a JWT Token | No | No |
+
+### Admin API End Points
 - | `POST` | `/api/admin/role` | Only Admin can add roles | **Yes** (Bearer Token) | ADMIN |
 - | `GET` | `/api/admin/employees` | View  all employee role | **Yes** (Bearer Token) | ADMIN |
 - | `GET` | `/api/admin/agents` | View  all the agents| **Yes** (Bearer Token) | ADMIN |
 - | `GET` | `/api/admin/tickets` | Only Admin can view all created tickets | **Yes** (Bearer Token) | ADMIN |
 - | `PATCH` | `/api/admin//ticket/{ticketId}/assign/{agentId}` | VOnly Admin can assign the ticket to a agent | **Yes** (Bearer Token) | ADMIN |
+
+### Support Agent API End Points
 - | `GET` | `/api/agent/tickets` | Agent can view all his assigned tickets by Admin | **Yes** (Bearer Token) | SUPPORT_AGENT |
 - | `PATCH` | `/api/agent/ticket/update/status` | Agent can update the status of tickets that are assigned to him | **Yes** (Bearer Token) | SUPPORT_AGENT |
 - | `POST` | `/api/agent/{ticketId}/add/comment` |  Agent can add comment in ticket | **Yes** (Bearer Token) | SUPPORT_AGENT |
-- | `POST` | `/api/employee//add/ticket` | Only Employee can create the ticket | **Yes** (Bearer Token) | EMPLOYEE |
+
+### Employee API End Points
+- | `POST` | `/api/employee/add/ticket` | Only Employee can create the ticket | **Yes** (Bearer Token) | EMPLOYEE |
 - | `GET` | `/api/employee/tickets` | Only Employee can view their created tickets |  **Yes** (Bearer Token) | EMPLOYEE |
 - | `POST` | `/api/employee/{ticketId}/add/comment` | Employee can add comment to his ticket"| **Yes** (Bearer Token) | EMPLOYEE |
 - | `PATCH` | `/api/employee/{ticketId}/close` | Employee can close their resolved tickets | **Yes** (Bearer Token) | EMPLOYEE |
