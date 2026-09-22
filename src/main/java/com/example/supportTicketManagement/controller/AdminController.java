@@ -30,7 +30,7 @@ public class AdminController {
     @Operation(summary = "Add Role", description = "Only Admin can add roles")
     @PostMapping("/role")
     public ResponseEntity<RoleResponseDto> addRole(@RequestBody @Valid RoleRequestDto requestDto) {
-        log.info("Request entered '/api/auth/role', addRole() method is called");
+        log.info("Request entered '/api/admin/role', addRole() method is called");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(adminService.addRole(requestDto));
     }
@@ -65,7 +65,7 @@ public class AdminController {
     @PatchMapping("/ticket/{ticketId}/assign/{agentId}")
     public ResponseEntity<AssignTicketResponseDto> assignTicketToAgent(@PathVariable Long ticketId,
                                                                        @PathVariable Long agentId) {
-        log.info("Request entered '/ticket/{}/assign/{}', assignTicketToAgent() method is called", ticketId, agentId);
+        log.info("Request entered '/api/admin/ticket/{}/assign/{}', assignTicketToAgent() method is called", ticketId, agentId);
         return ResponseEntity
                 .ok(ticketService.assignTicketToAgent(ticketId, agentId));
 
@@ -75,7 +75,7 @@ public class AdminController {
     @Operation(summary = "Ticket summary", description = "Admin can view the ticket summary such as number of tickets, ticket which are open, closed, resolved and in progress")
     @GetMapping("/ticket/summary")
     public ResponseEntity<TicketSummaryResponseDto> getTicketSummary() {
-        log.info("Request entered '/ticket/summary', getTicketSummary() method is called");
+        log.info("Request entered '/api/admin/ticket/summary', getTicketSummary() method is called");
         return ResponseEntity.ok(ticketService.getTicketSummary());
     }
 }

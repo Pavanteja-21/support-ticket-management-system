@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +29,6 @@ public class AdminServiceImpl implements AdminService {
     private final Mapper mapper;
 
     private final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
-
 
     // Returns all the Users of employees
     @Override
