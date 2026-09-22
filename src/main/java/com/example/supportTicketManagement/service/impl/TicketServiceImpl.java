@@ -259,5 +259,21 @@ public class TicketServiceImpl implements TicketService {
         return mapper.mapToTicketStatusDto(updatedTicket);
     }
 
+    // Gets the ticket summary such as number of tickets, ticket which are open, closed, resolved and in progress
+    @Override
+    public TicketSummaryResponseDto getTicketSummary() {
+        log.info("Inside TicketService.getTicketSummary() method");
+
+        long totalTickets = ticketRepository.count();
+        long openTickets = ticketRepository.countByStatus(Status.OPEN);
+        long inProgressTickets = ticketRepository.countByStatus(Status.IN_PROGRESS);
+        long resolvedTickets = ticketRepository.countByStatus(Status.RESOLVED);
+        long closedTickets = ticketRepository.countByStatus(Status.CLOSED);
+
+        log.info("Successfully returned the ticket summary from db, end of TicketService.getTicketSummary() method");
+
+        return new TicketSummaryResponseDto(totalTickets, openTickets, inProgressTickets, resolvedTickets, closedTickets);
+    }
+
 
 }

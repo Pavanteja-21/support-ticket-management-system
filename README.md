@@ -92,6 +92,7 @@ Once the application is running, you can interact with the following core endpoi
 - | `GET` | `/api/admin/agents` | View  all the agents| **Yes** (Bearer Token) | ADMIN |
 - | `GET` | `/api/admin/tickets` | Only Admin can view all created tickets | **Yes** (Bearer Token) | ADMIN |
 - | `PATCH` | `/api/admin//ticket/{ticketId}/assign/{agentId}` | VOnly Admin can assign the ticket to a agent | **Yes** (Bearer Token) | ADMIN |
+- | `GET` | `/api/admin/ticket/summary` | Admin can view the ticket summary | **Yes** (Bearer Token) | ADMIN |
 
 ### Support Agent API End Points
 - | `GET` | `/api/agent/tickets` | Agent can view all his assigned tickets by Admin | **Yes** (Bearer Token) | SUPPORT_AGENT |

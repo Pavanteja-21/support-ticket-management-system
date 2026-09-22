@@ -21,4 +21,6 @@ public interface TicketService {
 
     TicketStatusResponseDto closeTicketStatus(Long ticketId);
 
+    TicketSummaryResponseDto getTicketSummary();
+
 }

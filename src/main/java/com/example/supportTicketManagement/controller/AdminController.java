@@ -70,4 +70,12 @@ public class AdminController {
                 .ok(ticketService.assignTicketToAgent(ticketId, agentId));
 
     }
+
+    // Admin can view the ticket summary
+    @Operation(summary = "Ticket summary", description = "Admin can view the ticket summary such as number of tickets, ticket which are open, closed, resolved and in progress")
+    @GetMapping("/ticket/summary")
+    public ResponseEntity<TicketSummaryResponseDto> getTicketSummary() {
+        log.info("Request entered '/ticket/summary', getTicketSummary() method is called");
+        return ResponseEntity.ok(ticketService.getTicketSummary());
+    }
 }
