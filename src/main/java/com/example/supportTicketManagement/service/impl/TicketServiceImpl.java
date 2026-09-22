@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,6 +41,10 @@ public class TicketServiceImpl implements TicketService {
         log.info("Inside TicketService.createTicket() method");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
 
         String username = authentication.getName();
 
@@ -88,6 +93,10 @@ public class TicketServiceImpl implements TicketService {
         log.info("Inside TicketService.findAllMyTicktets() method");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
 
         String username = authentication.getName();
 
@@ -143,6 +152,10 @@ public class TicketServiceImpl implements TicketService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
+
         String username = authentication.getName();
 
         User user = userRepository.findByEmail(username)
@@ -166,6 +179,10 @@ public class TicketServiceImpl implements TicketService {
         log.info("Inside TicketService.updateTicketStatus() method");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
 
         String username = authentication.getName();
 
@@ -209,6 +226,10 @@ public class TicketServiceImpl implements TicketService {
         log.info("Inside TicketService.closeTicketStatus() method");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
 
         String username = authentication.getName();
 

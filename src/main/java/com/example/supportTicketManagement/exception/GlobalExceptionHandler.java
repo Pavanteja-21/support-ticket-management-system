@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -193,6 +192,24 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(responseDto);
+    }
+
+    // Handles the SamePasswordException
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ExceptionResponseDto> handleSamePasswordException
+    (PasswordMismatchException ex, HttpServletRequest request) {
+
+        ExceptionResponseDto responseDto = new ExceptionResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(responseDto);
     }
 

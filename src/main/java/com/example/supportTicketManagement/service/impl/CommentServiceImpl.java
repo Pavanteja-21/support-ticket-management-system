@@ -14,6 +14,7 @@ import com.example.supportTicketManagement.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +37,10 @@ public class CommentServiceImpl implements CommentService {
         log.info("Inside CommentService.createEmployeeComment() method");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
 
         String username = authentication.getName();
 
@@ -68,8 +73,11 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDto createAgentComment(CommentRequestDto requestDto, Long ticketId) {
         log.info("Inside CommentService.createAgentComment() method");
 
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadCredentialsException("User is not authenticated");
+        }
 
         String username = authentication.getName();
 

@@ -1,10 +1,9 @@
 package com.example.supportTicketManagement.service;
 
-import com.example.supportTicketManagement.dto.UserRegisterDto;
-import com.example.supportTicketManagement.dto.UserResponseDto;
-import com.example.supportTicketManagement.dto.RoleRequestDto;
-import com.example.supportTicketManagement.dto.RoleResponseDto;
+import com.example.supportTicketManagement.dto.*;
 
 public interface AuthService {
     UserResponseDto register(UserRegisterDto registerRequestDto);
+
+    void resetPassword(ResetPasswordRequestDto requestDto);
 }

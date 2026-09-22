@@ -4,10 +4,6 @@ import com.example.supportTicketManagement.dto.*;
 import com.example.supportTicketManagement.security.JwtService;
 import com.example.supportTicketManagement.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -38,8 +34,6 @@ public class AuthController {
 
     // Only Admin can able to register a new user
     @Operation(summary = "Registration form", description = "Only Admin can able to register a new user like employee or agent")
-    @ApiResponse(responseCode = "201",content = {@Content(mediaType = "\"application/json",
-            schema = @Schema(implementation = UserResponseDto.class))})
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRegisterDto requestDto) {
@@ -50,8 +44,6 @@ public class AuthController {
 
     // This is used for login
     @Operation(summary = "Login form")
-    @ApiResponse(responseCode = "201",content = {@Content(mediaType = "\"application/json",
-            schema = @Schema(implementation = LoginResponseDto.class))})
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto requestDto) {
         log.info("Request entered '/api/auth/login', login() method is called");
@@ -65,7 +57,12 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
-
-
-
+    // Reset Password
+    @Operation(summary = "Reset Password")
+    @PostMapping("/reset/password")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequestDto requestDto) {
+        log.info("Request entered '/api/auth/resetPassword', resetPassword() method is called");
+        authService.resetPassword(requestDto);
+        return ResponseEntity.ok("Reset Password Successfully");
+    }
 }
