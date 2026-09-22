@@ -83,6 +83,8 @@ Once the application is running, you can interact with the following core endpoi
 ### Auth API End Points
 - | `POST` | `/api/auth/register` | Only Admin can able to register a new user | **Yes** (Bearer Token) | ADMIN |
 - | `POST` | `/api/auth/login` | Login to receive a JWT Token | No | No |
+- - | `POST` | `/api/auth/reset/password` | For Changing the existing password | **Yes** (Bearer Token) | No |
+
 
 ### Admin API End Points
 - | `POST` | `/api/admin/role` | Only Admin can add roles | **Yes** (Bearer Token) | ADMIN |
